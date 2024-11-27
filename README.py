@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px  # Ensure this is installed and listed in requirements.txt
 
 # Load and prepare data (mock data; replace with actual data)
 df = pd.DataFrame({
@@ -32,36 +31,24 @@ st.metric("Grade with Highest Re-learning Avg", "Grade 3", "76.263")
 
 # Rankings Section
 st.header("Performance Rankings")
-# Re-Learning Average Rankings
-ranking_chart = px.bar(df, y="Branch", x="Re-Learning Avg", orientation="h", title="Re-Learning Average Rankings", color="Re-Learning Avg")
-st.plotly_chart(ranking_chart)
+st.subheader("Re-Learning Average Rankings")
+st.bar_chart(df.set_index("Branch")["Re-Learning Avg"])
 
-# Overall Average Rankings
-overall_chart = px.bar(df, y="Branch", x="Overall Avg", orientation="h", title="Overall Average Rankings", color="Overall Avg")
-st.plotly_chart(overall_chart)
+st.subheader("Overall Average Rankings")
+st.bar_chart(df.set_index("Branch")["Overall Avg"])
 
-# Impact Data Rankings
-impact_chart = px.bar(df, y="Branch", x="Impact Data", orientation="h", title="Impact Data Rankings", color="Impact Data")
-st.plotly_chart(impact_chart)
+st.subheader("Impact Data Rankings")
+st.bar_chart(df.set_index("Branch")["Impact Data"])
 
 # Grade-Specific Insights
 st.header("Grade-Specific Insights")
 selected_grade = st.selectbox("Select Grade", grade_df["Grade"].unique())
 grade_filtered = grade_df[grade_df["Grade"] == selected_grade]
-grade_chart = px.bar(grade_filtered, x="Branch", y="Re-Learning Avg", color="Subject", barmode="group", title=f"Re-Learning Averages for {selected_grade}")
-st.plotly_chart(grade_chart)
+st.write(f"Data for {selected_grade}", grade_filtered)
 
 # Branch-Specific Insights
 st.header("Branch-Specific Insights")
 selected_branch = st.selectbox("Select Branch", df["Branch"])
 branch_data = df[df["Branch"] == selected_branch]
-branch_pie = px.pie(
-    values=[
-        branch_data["Students >75%"].values[0],
-        100 - branch_data["Students >75%"].values[0] - branch_data["Students <40%"].values[0],
-        branch_data["Students <40%"].values[0],
-    ],
-    names=[">75%", "40-75%", "<40%"],
-    title=f"Performance Breakdown for {selected_branch}"
-)
-st.plotly_chart(branch_pie)
+st.write(f"Performance Breakdown for {selected_branch}")
+st.write(branch_data)
